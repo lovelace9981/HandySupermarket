@@ -1,0 +1,37 @@
+Trazado de informacion de pasillos
+
+COD_PASILLO,
+NOMBRE_PASILLO,
+
+Trazado de informacion de estante
+COD_ESTANTE,
+COD_PASILLO
+
+Trazado de la informacion del producto
+
+COD_BARRAS,
+COD_ESTANTE,
+PRECIO,
+STOCK,
+FOTOGRAFIA,
+INFORMACION_NUTRICIONAL,
+ALERGENOS,
+ALTERNATIVAS_COD_BARRAS
+
+
+Trazado de información de la compra
+
+ID_COMPRA.
+ID_PRODUCTO,
+ID_CLIENTE,
+CANTIDAD,
+FECHA_COMPRA
+
+
+
+Trazado de la información del cliente
+
+ID_CLIENTE,
+NOMBRE
+
+PASILLOS 1:N ESTANTE 1:N PRODUCTOS N:M COMPRAN N:1 CLIENTE
