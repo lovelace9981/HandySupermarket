@@ -1,1 +1,1 @@
-from opencv import  camera, qrbarcode
+from .opencv import  camera, qrbarcode

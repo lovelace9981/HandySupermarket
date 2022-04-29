@@ -1,11 +1,12 @@
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
+from tkinter import *
+
+#Tkinter solo admite imagenes PIL
+from PIL import Image
 
 class qrbarcode:
-    __qrbarcodedata
-    __qrbarcodetype
-
     def __init__(self, inputdata, inputype):
         self.__qrbarcodedata = inputdata
         self.__qrbarcodetype = inputype
@@ -16,32 +17,49 @@ class qrbarcode:
     def getType(self):
         return self.__qrbarcodetype
 
-
-class camera:
-    # Private attribute of camera
-    __cap
-    # Singleton instaciation
-    __instance = None
-
-    # https://es.stackoverflow.com/questions/79446/cu%C3%A1l-es-la-diferencia-entre-staticmethod-y-classmethod-en-python
-    @staticmethod
-    def getInstance():
-        # Camara
-        if camera.__instance == None:
-            camera()
-
-        return camera.__instance
+class cameraScanner:
 
     def __init__(self):
-            if camera.__instance != None
-                raise Exception("This class camera is a Singleton Class")
-            else:
-                # Asignamos la camara
-                self.__cap = cv2.VideoCapture(0)
-                camera.__instance = self
+            # Asignamos la camara - Private attribute of camera
+            self.__cam = cv2.VideoCapture(0)
+
+            if not self.__cam.isOpened():
+                raise Exception("No es posible abrir la camara", 0)
+
+            # Obteniendo la resolucion para ajustar la ventana
+            self.__width = self.__cam.get(cv2.CAP_PROP_FRAME_WIDTH)
+            self.__height = self.__cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+            # Ventana de Tkinter
+            window = Tk()
+
+            # Nombre de ventana de Tkinter
+            self.window.title("EscaneadorQRBar")
+
+            # Autodestruccion de ventana al cerrarse
+            self.window.protocol('WM_DELETE_WINDOW', self.destructor)
+
+            # Fijando la ventana a la resolucion de la camara
+            __w_geometry = self.__width + "x" + self.__height
+            self.windows.geometry(__w_geometry)
+
+            # Incializando el panel donde alojamos el video de la camara
+            self.panel = tk.Label(self.windows)
+            #Paddy interno de la imagen
+            self.panel.pack(padx=10, pady=10)
+
+            self.scanner()
+
+
+    def __del__(self):
+        if self.__cam.isOpened():
+            self.__cam.release()
 
     # Retorna un objeto del tipo qrbarcode
     def decoder(self, image):
+        barcodeData = None
+        barcodeType = None
+
         # Lo convierte en grayscale_ el FPS captado
         gray_img = cv2.cvtColor(image,0)
         # Decidificador de codigo de barras
@@ -55,19 +73,42 @@ class camera:
         return qrbarcode(barcodeData, barcodeType)
 
     # Necesita un bucle de ventana en Tkinter para ir captando los Frames
-    # Necesita un boton de parada automatico en el caso de que no lea datos nulos
+    # Retorna un dato, hasta que no retorne algo distinto a
     # Retorna tambien el dato del tipo de qrbarcode
     def scanner(self):
-        # Va llamando al frame
-        ret, frame = cap.read()
+        if self.__cam.isOpened():
+            # Va llamando al frame
+            ret, frame = self.__cam.read()
 
-        #Imprime la imagen
-        cv2.imshow('Image', frame)
+            if ret:
+                # BGR to RGBA
+                cev2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
 
-        returnbarcodedata = decoder(frame)
+                # RGBA CV2 TO PIL
+                frame_pil = Image.fromarray(cev2image)
 
-        # DEBUG ZONE
-        print(returnbarcodedata.getData + " " + returnbarcodedata.getType)
+                # PIL to Tkinter
+                frame_imgtk = ImageTk.PhotoImage(image=frame_pil)
+                # Obtenemos una imagen del frame
 
-        # Le manda al decodificador el Frame Per Second
-        return returnbarcodedata
+                self.panel.config(image=frame_imgtk)
+
+            returnbarcodedata = decoder(frame)
+
+            if returnbarcodedata.getData != None:
+                # DEBUG ZONE
+                print(returnbarcodedata.getData + " " + returnbarcodedata.getType)
+
+                # Le manda al decodificador el Frame Per Second
+                return returnbarcodedata
+
+            self.window.after(1, self.scanner)
+        else:
+            raise Exception("No es posible abrir la camara", 0)
+
+
+
+
+myscanner = cameraScanner
+
+myscanner.window

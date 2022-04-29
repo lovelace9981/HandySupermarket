@@ -1,4 +1,7 @@
-from tkinter import *
-from modules.opencv import camera, qrbarcode
+from modules import camera, qrbarcode
 
-mainWindow = Tk()
+myscanner = camera
+
+myscanner.scanner
+
+myscanner.window.mainloop()
