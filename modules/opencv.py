@@ -4,7 +4,7 @@ from pyzbar.pyzbar import decode
 from tkinter import *
 
 #Tkinter solo admite imagenes PIL
-from PIL import Image
+from PIL import Image, ImageTk
 
 class qrbarcode:
     def __init__(self, inputdata, inputype):
@@ -18,7 +18,6 @@ class qrbarcode:
         return self.__qrbarcodetype
 
 class cameraScanner:
-
     def __init__(self):
             # Asignamos la camara - Private attribute of camera
             self.__cam = cv2.VideoCapture(0)
@@ -31,20 +30,16 @@ class cameraScanner:
             self.__height = self.__cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
             # Ventana de Tkinter
-            window = Tk()
+            self.window = Tk()
 
             # Nombre de ventana de Tkinter
             self.window.title("EscaneadorQRBar")
 
             # Autodestruccion de ventana al cerrarse
-            self.window.protocol('WM_DELETE_WINDOW', self.destructor)
-
-            # Fijando la ventana a la resolucion de la camara
-            __w_geometry = self.__width + "x" + self.__height
-            self.windows.geometry(__w_geometry)
+            #self.window.protocol('WM_DELETE_WINDOW', self.destructor)
 
             # Incializando el panel donde alojamos el video de la camara
-            self.panel = tk.Label(self.windows)
+            self.panel = Label(self.window)
             #Paddy interno de la imagen
             self.panel.pack(padx=10, pady=10)
 
@@ -67,10 +62,12 @@ class cameraScanner:
 
         # Obteniendo la informacion del objeto barcode
         for obj in barcode:
-            barcodeData = obj.datadecode("utf-8")
+            barcodeData = obj.data.decode("utf-8")
             barcodeType = obj.type
 
-        return qrbarcode(barcodeData, barcodeType)
+        data = qrbarcode(barcodeData, barcodeType)
+
+        return data
 
     # Necesita un bucle de ventana en Tkinter para ir captando los Frames
     # Retorna un dato, hasta que no retorne algo distinto a
@@ -91,24 +88,27 @@ class cameraScanner:
                 frame_imgtk = ImageTk.PhotoImage(image=frame_pil)
                 # Obtenemos una imagen del frame
 
+                self.panel.imgtk = frame_imgtk
                 self.panel.config(image=frame_imgtk)
 
-            returnbarcodedata = decoder(frame)
+            returnbarcodedata = self.decoder(frame)
 
-            if returnbarcodedata.getData != None:
+            if returnbarcodedata.getData() != None:
                 # DEBUG ZONE
-                print(returnbarcodedata.getData + " " + returnbarcodedata.getType)
+                print(returnbarcodedata.getData())
+                print(returnbarcodedata.getType())
+
 
                 # Le manda al decodificador el Frame Per Second
                 return returnbarcodedata
-
-            self.window.after(1, self.scanner)
+            else:
+                self.window.after(1, self.scanner)
         else:
-            raise Exception("No es posible abrir la camara", 0)
+           raise Exception("No es posible abrir la camara", 0)
 
 
 
 
-myscanner = cameraScanner
+myscanner = cameraScanner()
 
-myscanner.window
+myscanner.window.mainloop()
