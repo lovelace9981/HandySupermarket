@@ -3,7 +3,11 @@ import numpy as np
 from pyzbar.pyzbar import decode
 from tkinter import *
 
-#Tkinter solo admite imagenes PIL
+# Fuentes consultadas
+# https://answers.opencv.org/question/137744/python-opencv-tkinter-playing-video-help/
+# https://solarianprogrammer.com/2018/04/21/python-opencv-show-video-tkinter-window/
+
+#Tkinter solo admite imagenes PIL y a su vez TK
 from PIL import Image, ImageTk
 
 class qrbarcode:
@@ -22,12 +26,9 @@ class cameraScanner:
             # Asignamos la camara - Private attribute of camera
             self.__cam = cv2.VideoCapture(0)
 
+            # Control de excepcion para no abrir el escaner al no existir camara
             if not self.__cam.isOpened():
                 raise Exception("No es posible abrir la camara", 0)
-
-            # Obteniendo la resolucion para ajustar la ventana
-            self.__width = self.__cam.get(cv2.CAP_PROP_FRAME_WIDTH)
-            self.__height = self.__cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
             # Ventana de Tkinter
             self.window = Tk()
@@ -35,14 +36,13 @@ class cameraScanner:
             # Nombre de ventana de Tkinter
             self.window.title("EscaneadorQRBar")
 
-            # Autodestruccion de ventana al cerrarse
-            #self.window.protocol('WM_DELETE_WINDOW', self.destructor)
-
             # Incializando el panel donde alojamos el video de la camara
             self.panel = Label(self.window)
+
             #Paddy interno de la imagen
             self.panel.pack(padx=10, pady=10)
 
+            # Llamamos al escaner
             self.scanner()
 
 
@@ -74,9 +74,10 @@ class cameraScanner:
     # Retorna tambien el dato del tipo de qrbarcode
     def scanner(self):
         if self.__cam.isOpened():
-            # Va llamando al frame
+            # Obtienen los frames de la camara desde OpenCV
             ret, frame = self.__cam.read()
 
+            # Comprueba que ret sea distinto a vacio
             if ret:
                 # BGR to RGBA
                 cev2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
@@ -86,8 +87,8 @@ class cameraScanner:
 
                 # PIL to Tkinter
                 frame_imgtk = ImageTk.PhotoImage(image=frame_pil)
-                # Obtenemos una imagen del frame
 
+                # Fijamos la imagen al panel de Tk
                 self.panel.imgtk = frame_imgtk
                 self.panel.config(image=frame_imgtk)
 
@@ -95,8 +96,8 @@ class cameraScanner:
 
             if returnbarcodedata.getData() != None:
                 # DEBUG ZONE
-                print(returnbarcodedata.getData())
-                print(returnbarcodedata.getType())
+                # print(returnbarcodedata.getData())
+                # print(returnbarcodedata.getType())
 
 
                 # Le manda al decodificador el Frame Per Second
@@ -108,7 +109,7 @@ class cameraScanner:
 
 
 
+# Codigo a incluir donde se llamen los modulos
+#myscanner = cameraScanner()
 
-myscanner = cameraScanner()
-
-myscanner.window.mainloop()
+#myscanner.window.mainloop()
