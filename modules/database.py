@@ -51,8 +51,8 @@ class databaseSQL(object):
                     print(f"Error executing a command: {e}")
                     self.__conn.rollback()
 
-            # Destruimos el cursor para la 
-            self.__cur.
+            # Destruimos el cursor para la
+            self.__cur.close()
 
     def __new__(cls):
         # Comprobacion de singleton
@@ -63,12 +63,18 @@ class databaseSQL(object):
 
     def __del__(self):
         # Destruimos la conexion con SQL
-        self.conn.close()
+        self.__conn.close()
 
     def queryTransact(self, query, table, clause):
+        try:
+            # Creamos el cursor
+            self.__cur =  self.__conn.cursor()
+        except Exception as e:
+            print(f"Error executing: {e}")
+            self.__cur.close()
 
     def queryConsultas(self, query, table, clause):
 
-    def
+
 
 database = databaseSQL()
