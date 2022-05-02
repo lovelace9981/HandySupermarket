@@ -5,3 +5,5 @@ myscanner = camera
 myscanner.scanner
 
 myscanner.window.mainloop()
+
+print("hola")
