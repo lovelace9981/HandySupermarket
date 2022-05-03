@@ -10,11 +10,16 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
-class scannerGUI:
-    def __init__(self):
-        self.OUTPUT_PATH = Path(__file__).parent
-        self.ASSETS_PATH = self.OUTPUT_PATH / Path("./assets")
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
+
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
+
+
+class pasilloGUI:
+    def __init__(self):
         self.window = Tk()
 
         self.window.geometry("360x800")
@@ -31,16 +36,8 @@ class scannerGUI:
         )
 
         self.canvas.place(x=0, y=0)
-        self.image_image_1 = PhotoImage(
-            file=self.relative_to_assets("image_1.png"))
-        self.image_1 = self.canvas.create_image(
-            180.0,
-            89.0,
-            image=self.image_image_1
-        )
-
         self.button_image_1 = PhotoImage(
-            file=self.relative_to_assets("button_1.png"))
+            file=relative_to_assets("button_1.png"))
         self.button_1 = Button(
             image=self.button_image_1,
             borderwidth=0,
@@ -54,10 +51,15 @@ class scannerGUI:
             width=45.0,
             height=45.0
         )
-        self.window.resizable(False, False)
 
-    def relative_to_assets(self, path: str) -> Path:
-        return self.ASSETS_PATH / Path(path)
+        self.image_image_1 = PhotoImage(
+            file=relative_to_assets("image_1.png"))
+        self.image_1 = self.canvas.create_image(
+            180.0,
+            65.0,
+            image=self.image_image_1
+        )
+        self.window.resizable(False, False)
 
     def getWindow(self):
         return self.window

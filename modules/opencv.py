@@ -25,7 +25,7 @@ class qrbarcode:
 
 
 class cameraScanner:
-    def __init__(self):
+    def __init__(self, gui):
         # Asignamos la camara - Private attribute of camera
         self.__cam = cv2.VideoCapture(0)
 
@@ -35,9 +35,6 @@ class cameraScanner:
         # Ajuste del tamanio del frame de la camara
         self.__cam.set(cv2.CAP_PROP_FRAME_WIDTH, 160)
         self.__cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 120)
-
-        # Interfaz de escaneo
-        gui = scannerGUI()
 
         # Ventana de Tkinter
         self.window = gui.getWindow()

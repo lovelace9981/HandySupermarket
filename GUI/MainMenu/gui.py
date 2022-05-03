@@ -9,32 +9,36 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
-class mainMenu:
-    def __init(self):
-        self.OUTPUT_PATH = Path(__file__).parent
-        self.ASSETS_PATH = OUTPUT_PATH / Path("./assets")
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
+
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
+
+
+class mainMenuGUI:
+    def __init(self):
         self.window = Tk()
 
         self.window.geometry("360x800")
-        self.window.configure(bg = "#000000")
-
+        self.window.configure(bg="#000000")
 
         self.canvas = Canvas(
-            window,
-            bg = "#000000",
-            height = 800,
-            width = 360,
-            bd = 0,
-            highlightthickness = 0,
-            relief = "ridge"
+            self.window,
+            bg="#000000",
+            height=800,
+            width=360,
+            bd=0,
+            highlightthickness=0,
+            relief="ridge"
         )
 
-        self.canvas.place(x = 0, y = 0)
-        button_image_1 = PhotoImage(
+        self.canvas.place(x=0, y=0)
+        self.button_image_1 = PhotoImage(
             file=relative_to_assets("button_1.png"))
         self.button_1 = Button(
-            image=button_image_1,
+            image=self.button_image_1,
             borderwidth=0,
             highlightthickness=0,
             command=lambda: print("button_1 clicked"),
@@ -47,10 +51,10 @@ class mainMenu:
             height=64.0
         )
 
-        button_image_2 = PhotoImage(
+        self.button_image_2 = PhotoImage(
             file=relative_to_assets("button_2.png"))
         self.button_2 = Button(
-            image=button_image_2,
+            image=self.button_image_2,
             borderwidth=0,
             highlightthickness=0,
             command=lambda: print("button_2 clicked"),
@@ -63,10 +67,10 @@ class mainMenu:
             height=61.0
         )
 
-        button_image_3 = PhotoImage(
+        self.button_image_3 = PhotoImage(
             file=relative_to_assets("button_3.png"))
         self.button_3 = Button(
-            image=button_image_3,
+            image=self.button_image_3,
             borderwidth=0,
             highlightthickness=0,
             command=lambda: print("button_3 clicked"),
@@ -81,15 +85,12 @@ class mainMenu:
 
         image_image_1 = PhotoImage(
             file=relative_to_assets("image_1.png"))
-        self.image_1 = canvas.create_image(
+        self.image_1 = self.canvas.create_image(
             181.0,
             255.0,
             image=image_image_1
         )
-        window.resizable(False, False)
-
-    def relative_to_assets(self, path: str) -> Path:
-        return self.ASSETS_PATH / Path(path)
+        self.window.resizable(False, False)
 
     def getWindow(self):
         return self.window

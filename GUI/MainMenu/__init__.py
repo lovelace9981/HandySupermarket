@@ -1,1 +1,1 @@
-from .gui import mainMenu
+from .gui import mainMenuGUI
