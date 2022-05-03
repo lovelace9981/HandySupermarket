@@ -1,9 +1,7 @@
-from modules import camera, qrbarcode
+from modules import cameraScanner, qrbarcode
 
-myscanner = camera
+myscanner = cameraScanner()
 
 myscanner.scanner
 
 myscanner.window.mainloop()
-
-print("hola")

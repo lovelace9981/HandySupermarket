@@ -2,13 +2,15 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 from tkinter import *
+from GUI import scannerGUI
 
 # Fuentes consultadas
 # https://answers.opencv.org/question/137744/python-opencv-tkinter-playing-video-help/
 # https://solarianprogrammer.com/2018/04/21/python-opencv-show-video-tkinter-window/
 
-#Tkinter solo admite imagenes PIL y a su vez TK
+# Tkinter solo admite imagenes PIL y a su vez TK
 from PIL import Image, ImageTk
+
 
 class qrbarcode:
     def __init__(self, inputdata, inputype):
@@ -21,30 +23,36 @@ class qrbarcode:
     def getType(self):
         return self.__qrbarcodetype
 
+
 class cameraScanner:
     def __init__(self):
-            # Asignamos la camara - Private attribute of camera
-            self.__cam = cv2.VideoCapture(0)
+        # Asignamos la camara - Private attribute of camera
+        self.__cam = cv2.VideoCapture(0)
 
-            # Control de excepcion para no abrir el escaner al no existir camara
-            if not self.__cam.isOpened():
-                raise Exception("No es posible abrir la camara", 0)
+        # Control de excepcion para no abrir el escaner al no existir camara
+        if not self.__cam.isOpened():
+            raise Exception("No es posible abrir la camara", 0)
+        # Ajuste del tamanio del frame de la camara
+        self.__cam.set(cv2.CAP_PROP_FRAME_WIDTH, 160)
+        self.__cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 120)
 
-            # Ventana de Tkinter
-            self.window = Tk()
+        # Interfaz de escaneo
+        gui = scannerGUI()
 
-            # Nombre de ventana de Tkinter
-            self.window.title("EscaneadorQRBar")
+        # Ventana de Tkinter
+        self.window = gui.getWindow()
 
-            # Incializando el panel donde alojamos el video de la camara
-            self.panel = Label(self.window)
+        # Nombre de ventana de Tkinter
+        self.window.title("EscaneadorQRBar")
 
-            #Paddy interno de la imagen
-            self.panel.pack(padx=10, pady=10)
+        # Incializando el panel donde alojamos el video de la camara
+        self.panel = Label(self.window)
 
-            # Llamamos al escaner
-            self.scanner()
+        # Posicionamiento correcto de la camara
+        self.panel.place(x=-140, y=200)
 
+        # Llamamos al escaner
+        self.scanner()
 
     def __del__(self):
         if self.__cam.isOpened():
@@ -56,7 +64,7 @@ class cameraScanner:
         barcodeType = None
 
         # Lo convierte en grayscale_ el FPS captado
-        gray_img = cv2.cvtColor(image,0)
+        gray_img = cv2.cvtColor(image, 0)
         # Decidificador de codigo de barras
         barcode = decode(gray_img)
 
@@ -99,14 +107,12 @@ class cameraScanner:
                 # print(returnbarcodedata.getData())
                 # print(returnbarcodedata.getType())
 
-
                 # Le manda al decodificador el Frame Per Second
                 return returnbarcodedata
             else:
                 self.window.after(1, self.scanner)
         else:
-           raise Exception("No es posible abrir la camara", 0)
-
+            raise Exception("No es posible abrir la camara", 0)
 
 
 # Codigo a incluir donde se llamen los modulos
