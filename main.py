@@ -1,10 +1,17 @@
 from modules import cameraScanner, qrbarcode
 from GUI import carritoGUI, scannerGUI, pasilloGUI, productoGUI, mainMenuGUI
 
-gui = scannerGUI()
+mainmenu = mainMenuGUI()
 
-myscanner = cameraScanner(gui)
+mainmenu.getWindow().mainloop()
 
-myscanner.scanner
+# Me dice que no tengo window cuando si lo tengo
 
-myscanner.window.mainloop()
+
+#gui = scannerGUI()
+
+#myscanner = cameraScanner(gui)
+
+#myscanner.scanner
+
+#myscanner.window.mainloop()
