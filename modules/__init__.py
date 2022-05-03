@@ -2,6 +2,3 @@
 
 from .opencv import  cameraScanner, qrbarcode
 from .database import dmlContainer, databaseSQL
-from GUI import scannerGUI
-
-

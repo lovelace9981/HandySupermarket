@@ -160,6 +160,6 @@ class databaseSQL(object):
 # Imprimir tabla Head
 #print(*resultConsulta.getHeaderTable(), sep = " ")
 #for i in resultConsulta.getBodyTable():
-    print(*i, sep = " ")
+#    print(*i, sep = " ")
 
 #print("\n")
