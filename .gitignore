@@ -1,5 +1,9 @@
 __pycache__/
 GUI/__pycache__/
 modules/__pycache__/
-modules/*/__pycache__/
+modules/Carrito/__pycache__/
+modules/EscaneoQR/__pycache__/
+modules/InfoPasillo/__pycache__/
+modules/InfoProducto/__pycache__/
+modules/MainMenu/__pycache__/
 .mypy_cache/
