@@ -60,6 +60,7 @@ class carritoGUI:
             height=45.0
         )
         self.window.resizable(False, False)
+        self.window.mainloop()
 
     def getWindow(self):
         return self.window

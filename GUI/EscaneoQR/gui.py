@@ -7,25 +7,26 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label
+from modules import cameraScanner
+
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path("./assets")
+
+
+def relative_to_assets(path: str) -> Path:
+    return ASSETS_PATH / Path(path)
+
 
 class scannerGUI:
-    def __init__(self):
-        self.OUTPUT_PATH = Path(__file__).parent
-        self.ASSETS_PATH = self.OUTPUT_PATH / Path("./assets")
+    def __init__(self, window):
 
-        self.window = Tk()
+        self.window = window
 
         self.window.geometry("360x800")
         self.window.configure(bg="#000000")
 
         # Nombre de ventana de Tkinter
         self.window.title("EscaneadorQRBar")
-
-        # Incializando el panel donde alojamos el video de la camara
-        self.panel = Label(self.window)
-
-        # Posicionamiento correcto de la camara
-        self.panel.place(x=-140, y=200)
 
         self.canvas = Canvas(
             self.window,
@@ -38,14 +39,16 @@ class scannerGUI:
         )
 
         self.canvas.place(x=0, y=0)
-        self.image_image_1 = PhotoImage(file=self.relative_to_assets("image_1.png"))
-        # self.image_1 = self.canvas.create_image(
-        #     180.0,
-        #     89.0,
-        #     image=self.image_image_1
-        # )
+        self.image_image_1 = PhotoImage(
+            file=relative_to_assets("image_1.png"))
+        self.image_1 = self.canvas.create_image(
+            180.0,
+            89.0,
+            image=self.image_image_1
+        )
 
-        self.button_image_1 = PhotoImage(file=self.relative_to_assets("button_1.png"))
+        self.button_image_1 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
         self.button_1 = Button(
             image=self.button_image_1,
             borderwidth=0,
@@ -59,7 +62,14 @@ class scannerGUI:
             width=45.0,
             height=45.0
         )
-        self.window.resizable(False, False)
 
-    def relative_to_assets(self, path: str) -> Path:
-        return self.ASSETS_PATH / Path(path)
+        # Incializando el panel donde alojamos el video de la camara
+        self.panel = Label(self.window)
+
+        # Posicionamiento correcto de la camara
+        self.panel.place(x=0, y=200)
+
+        self.escaneo = cameraScanner(self.panel, self.window)
+
+        self.window.resizable(False, False)
+        self.window.mainloop()

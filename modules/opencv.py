@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 from tkinter import *
-from GUI import scannerGUI
 
 # Fuentes consultadas
 # https://answers.opencv.org/question/137744/python-opencv-tkinter-playing-video-help/
@@ -10,6 +9,7 @@ from GUI import scannerGUI
 
 # Tkinter solo admite imagenes PIL y a su vez TK
 from PIL import Image, ImageTk
+
 
 class qrbarcode:
     def __init__(self, inputdata, inputype):
@@ -22,8 +22,9 @@ class qrbarcode:
     def getType(self):
         return self.__qrbarcodetype
 
+
 class cameraScanner:
-    def __init__(self):
+    def __init__(self, panel, window):
         # Asignamos la camara - Private attribute of camera
         self.__cam = cv2.VideoCapture(0)
 
@@ -31,11 +32,16 @@ class cameraScanner:
         if not self.__cam.isOpened():
             raise Exception("No es posible abrir la camara", 0)
         # Ajuste del tamanio del frame de la camara
-        self.__cam.set(cv2.CAP_PROP_FRAME_WIDTH, 160)
-        self.__cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 120)
+        self.__cam.set(cv2.CAP_PROP_FRAME_WIDTH, 360)
+        self.__cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
+
+        self.panel = panel
+        self.window = window
 
         # Ventana de Tkinter
-        self.gui = scannerGUI() # Aqui
+        # self.gui = scannerGUI()  # Aqui
+        #
+        # self.gui.window.mainloop()
 
         # Nombre de ventana de Tkinter
     #    self.window.title("EscaneadorQRBar")
@@ -92,8 +98,8 @@ class cameraScanner:
                 frame_imgtk = ImageTk.PhotoImage(image=frame_pil)
 
                 # Fijamos la imagen al panel de Tk
-                self.gui.panel.imgtk = frame_imgtk
-                self.gui.panel.config(image=frame_imgtk)
+                self.panel.imgtk = frame_imgtk
+                self.panel.config(image=frame_imgtk)
 
             returnbarcodedata = self.decoder(frame)
 
@@ -105,7 +111,7 @@ class cameraScanner:
                 # Le manda al decodificador el Frame Per Second
                 return returnbarcodedata
             else:
-                self.gui.window.after(1, self.scanner)
+                self.window.after(1, self.scanner)
         else:
             raise Exception("No es posible abrir la camara", 0)
 
