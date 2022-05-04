@@ -81,5 +81,5 @@ class scannerGUI:
         self.window.mainloop()
 
     def finMainloop(self):
-        self.window.destroy()
         del self.escaneo
+        self.window.destroy()

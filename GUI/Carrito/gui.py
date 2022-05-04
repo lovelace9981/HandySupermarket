@@ -47,10 +47,11 @@ class carritoGUI:
         self.button_image_1 = PhotoImage(
             file=relative_to_assets("button_1.png"))
         self.button_1 = Button(
+            self.window,
             image=self.button_image_1,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: print("button_1 clicked"),
+            command=lambda: self.finMainloop(),
             relief="flat"
         )
         self.button_1.place(
@@ -60,7 +61,13 @@ class carritoGUI:
             height=45.0
         )
         self.window.resizable(False, False)
-        self.window.mainloop()
+        self.inicioMainloop()
 
     def getWindow(self):
         return self.window
+
+    def inicioMainloop(self):
+        self.window.mainloop()
+
+    def finMainloop(self):
+        self.window.destroy()
