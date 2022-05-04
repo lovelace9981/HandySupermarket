@@ -53,6 +53,7 @@ class cameraScanner:
     #    self.panel.place(x=-140, y=200)
 
         # Llamamos al escaner
+        # Pasar llamada a scannerGUI para gestionarlo alli
         self.scanner()
 
     def __del__(self):
