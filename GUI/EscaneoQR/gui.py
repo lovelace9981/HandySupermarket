@@ -14,6 +14,7 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
 
 def relative_to_assets(path: str) -> Path:
+    print(f"Encontrado {path}")
     return ASSETS_PATH / Path(path)
 
 
@@ -39,24 +40,25 @@ class scannerGUI:
         )
 
         self.canvas.place(x=0, y=0)
-        self.image_image_1 = PhotoImage(
+        self.image_image_texto = PhotoImage(
             file=relative_to_assets("image_1.png"))
-        self.image_1 = self.canvas.create_image(
+        self.image_texto = self.canvas.create_image(
             180.0,
             89.0,
-            image=self.image_image_1
+            image=self.image_image_texto
         )
 
-        self.button_image_1 = PhotoImage(
-            file=relative_to_assets("button_1.png"))
-        self.button_1 = Button(
-            image=self.button_image_1,
+        self.button_image_atras = PhotoImage(
+            file=relative_to_assets("button_atras.png"))
+        self.button_atras = Button(
+            self.window,
+            image=self.button_image_atras,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: print("button_1 clicked"),
+            command=lambda: self.finMainloop(),
             relief="flat"
         )
-        self.button_1.place(
+        self.button_atras.place(
             x=12.0,
             y=18.0,
             width=45.0,
@@ -72,4 +74,12 @@ class scannerGUI:
         self.escaneo = cameraScanner(self.panel, self.window)
 
         self.window.resizable(False, False)
+
+        self.inicioMainloop()
+
+    def inicioMainloop(self):
         self.window.mainloop()
+
+    def finMainloop(self):
+        self.window.destroy()
+        del self.escaneo

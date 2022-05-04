@@ -100,6 +100,7 @@ class cameraScanner:
                 # Fijamos la imagen al panel de Tk
                 self.panel.imgtk = frame_imgtk
                 self.panel.config(image=frame_imgtk)
+                self.panel.place(x=0, y=200)
 
             returnbarcodedata = self.decoder(frame)
 

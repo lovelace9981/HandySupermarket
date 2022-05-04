@@ -8,7 +8,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import tkinter as tk
-from GUI import scannerGUI
+from GUI import scannerGUI, carritoGUI, pasilloGUI, productoGUI
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
@@ -21,6 +21,21 @@ def relative_to_assets(path: str) -> Path:
 def menuEscaneo(ventana):
     win_escaneo = tk.Toplevel(ventana)
     escaner = scannerGUI(win_escaneo)
+
+
+def menuCarrito(ventana):
+    win_carrito = tk.Toplevel(ventana)
+    carrito = carritoGUI(win_carrito)
+
+
+def menuPasillo(ventana):
+    win_pasillo = tk.Toplevel(ventana)
+    pasillo = pasilloGUI(win_pasillo)
+
+
+def menuProducto(ventana):
+    win_producto = tk.Toplevel(ventana)
+    producto = productoGUI(ventana)
 
 
 window = Tk()
@@ -46,7 +61,7 @@ button_1 = Button(
   borderwidth=0,
   highlightthickness=0,
   # Ejecución de comandos al hacer click
-  command=lambda: print("button 1 clicked"),
+  command=lambda: menuCarrito(window),
   relief="flat"
 )
 button_1.place(

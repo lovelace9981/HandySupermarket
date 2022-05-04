@@ -19,8 +19,8 @@ def relative_to_assets(path: str) -> Path:
 
 
 class carritoGUI:
-    def __init__(self):
-        self.window = Tk()
+    def __init__(self, window):
+        self.window = window
 
         self.window.geometry("360x800")
         self.window.configure(bg="#000000")
