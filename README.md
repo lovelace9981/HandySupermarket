@@ -3,9 +3,10 @@ Supermercado inclusivo para personas con motricidad reducida con integración de
 
 #Packages needed
 
-apt-get install libmariadb-dev python3-tk python3-dev zbar-tools  libzbar0 libzbar-dev
+apt-get install libmariadb-dev python3-tk python3-dev zbar-tools  libzbar0 libzbar-dev python3-pil python3-pil.imagetk
 
-pip3 install opencv-python pyzbar
+
+pip3 install opencv-python pyzbar 
 
 
 https://pypi.org/project/pyzbar/
