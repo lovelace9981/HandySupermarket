@@ -7,7 +7,10 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Label
-from modules import cameraScanner
+from modules import cameraScanner, qrbarcode, dmlContainer, databaseSQL
+import re
+
+# CREADOR DE QR: https://es.qr-code-generator.com/
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets")
@@ -70,16 +73,53 @@ class scannerGUI:
 
         # Posicionamiento correcto de la camara
         self.panel.place(x=0, y=200)
-
-        self.escaneo = cameraScanner(self.panel, self.window)
-
         self.window.resizable(False, False)
 
-        self.inicioMainloop()
+        print("Entra")
 
-    def inicioMainloop(self):
+        self.mycamera = cameraScanner(self.window)
+        self.mycamera.update_image()
         self.window.mainloop()
 
-    def finMainloop(self):
-        del self.escaneo
-        self.window.destroy()
+        # debug
+        #print(self.mycamera.data.getType())
+        database = databaseSQL()
+
+        if self.mycamera.data.getType() == "QRCODE":
+            # Verificamos que sea un codigo de barras
+            if bool(re.search("[0-9]{11}", self.mycamera.data.getData())):
+                print("BARCODE")
+
+                query = "SELECT *"
+                table = "FROM PRODUCTOS"
+                clause = "WHERE COD_BARRAS_EAN_13 = '" + self.mycamera.data.getData() + "'"
+
+                dmlContainer = database.queryConsultas(query, table, clause)
+
+                print(dmlContainer.getHeaderTable())
+                print(dmlContainer.getBodyTable())
+
+
+            else: # No es codigo de barras, es un QR de pasillos estante
+                print("QR PASILLOS ESTANTES")
+
+                # sample of Join or Cartesian producto on two SQL tables
+                #SELECT  PASILLOS_ESTANTES.COD_QR_PASILLO_ESTANTE, COD_BARRAS_EAN_13, DESCRIPCION, NOMBRE, PRECIO, STOCK
+                #FROM PASILLOS_ESTANTES, PRODUCTOS WHERE PASILLOS_ESTANTES.COD_QR_PASILLO_ESTANTE = "CARNICERIA01" AND PASILLOS_ESTANTES.COD_QR_PASILLO_ESTANTE = PRODUCTOS.COD_QR_PASILLO_ESTANTE;
+
+                query = "SELECT PASILLOS_ESTANTES.COD_QR_PASILLO_ESTANTE, COD_BARRAS_EAN_13, DESCRIPCION, NOMBRE, PRECIO, STOCK"
+                table = "FROM PASILLOS_ESTANTES, PRODUCTOS"
+                clause = "WHERE PASILLOS_ESTANTES.COD_QR_PASILLO_ESTANTE = '" + self.mycamera.data.getData() + "' AND PASILLOS_ESTANTES.COD_QR_PASILLO_ESTANTE = PRODUCTOS.COD_QR_PASILLO_ESTANTE"
+
+                dmlContainer = database.queryConsultas(query, table, clause)
+
+                print(dmlContainer.getHeaderTable())
+                print(dmlContainer.getBodyTable())
+
+
+            # Disenio de REGEX
+            # CARNICERIA01
+            # PAS = Pasillo
+            # 01 = Estante
+            # 01234567891
+            # 11111111111

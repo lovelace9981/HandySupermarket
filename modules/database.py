@@ -78,7 +78,9 @@ class databaseSQL(object):
     # QUERY INSERT
     # TABLE INTO TABLE (COLUMN, COLUM2, COLUMN3)
     # CLAUSE VALUES (1,2,3) VALUE > 10
+    # Boolean for check status of Transaction
     def queryTransact(self, query = None, table = None, clause = None):
+        status = False
         try:
             # Check
             if (query != None and table != None and clause != None):
@@ -93,6 +95,7 @@ class databaseSQL(object):
             self.__cur =  self.__conn.cursor()
             # Execution
             self.__cur.execute(concatenateSQL)
+            status = True
         except Exception as e:
             print(f"Error executing: {e}")
             self.__conn.rollback()
@@ -100,10 +103,14 @@ class databaseSQL(object):
         self.__conn.commit()
         self.__cur.close()
 
+        return status
+
     # QUERY SELECT *
     # TABLE FROM TABLE
     # CLAUSE WHERE VALUE > 10 OPCIONAL
     def queryConsultas(self, query = None, table = None, clause = None):
+        returndml = dmlContainer()
+
         try:
             # Check
             if (query != None and table != None):

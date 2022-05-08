@@ -1,18 +1,11 @@
-import cv2
-import numpy as np
-from pyzbar.pyzbar import decode
-from tkinter import *
-
-# Fuentes consultadas
-# https://answers.opencv.org/question/137744/python-opencv-tkinter-playing-video-help/
-# https://solarianprogrammer.com/2018/04/21/python-opencv-show-video-tkinter-window/
-
-# Tkinter solo admite imagenes PIL y a su vez TK
+import tkinter as tk
 from PIL import Image, ImageTk
+from pyzbar.pyzbar import decode
 
+import cv2
 
 class qrbarcode:
-    def __init__(self, inputdata, inputype):
+    def __init__(self, inputdata = None, inputype = None):
         self.__qrbarcodedata = inputdata
         self.__qrbarcodetype = inputype
 
@@ -22,51 +15,41 @@ class qrbarcode:
     def getType(self):
         return self.__qrbarcodetype
 
-
 class cameraScanner:
-    def __init__(self, panel, window):
-        # Asignamos la camara - Private attribute of camera
-        self.__cam = cv2.VideoCapture(0)
-
-        # Control de excepcion para no abrir el escaner al no existir camara
-        if not self.__cam.isOpened():
-            raise Exception("No es posible abrir la camara", 0)
-        # Ajuste del tamanio del frame de la camara
-        self.__cam.set(cv2.CAP_PROP_FRAME_WIDTH, 360)
-        self.__cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
-
-        self.panel = panel
+    def __init__(self, window):
+        # Obtenemos ventana
         self.window = window
 
-        # Ventana de Tkinter
-        # self.gui = scannerGUI()  # Aqui
-        #
-        # self.gui.window.mainloop()
+        # Camara
+        self.cam = cv2.VideoCapture(0)
 
-        # Nombre de ventana de Tkinter
-    #    self.window.title("EscaneadorQRBar")
+        # Control de excepcion para no abrir el escaner al no existir camara
+        if not self.cam.isOpened():
+            raise Exception("No es posible abrir la camara", 0)
+        # Resolucion de camara
+        #self.width = self.cam.get(cv2.CAP_PROP_FRAME_WIDTH)
+        #self.height = self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        self.width_height = 360
 
-        # Incializando el panel donde alojamos el video de la camara
-    #    self.panel = Label(self.window)
+        #self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, self.width_height)
+        #self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.width_height)
 
-        # Posicionamiento correcto de la camara
-    #    self.panel.place(x=-140, y=200)
+        # Intervalo de actualizacion
+        self.interval = 10 # Interval in ms to get the latest frame
 
-        # Llamamos al escaner
-        # Pasar llamada a scannerGUI para gestionarlo alli
-        self.scanner()
+        # Create canvas for image frame
+        #self.canvas = tk.Canvas(self.window, width=self.width, height=self.height)
+        self.canvas = tk.Canvas(self.window, width=self.width_height, height=self.width_height)
+        self.canvas.grid(row=0, column=0)
+        # Update image on canvas
+#        self.update_image()
 
-    def __del__(self):
-        if self.__cam.isOpened():
-            self.__cam.release()
-
-    # Retorna un objeto del tipo qrbarcode
-    def decoder(self, image):
+    def decoder(self):
         barcodeData = None
         barcodeType = None
 
         # Lo convierte en grayscale_ el FPS captado
-        gray_img = cv2.cvtColor(image, 0)
+        gray_img = cv2.cvtColor(self.frame, 0)
         # Decidificador de codigo de barras
         barcode = decode(gray_img)
 
@@ -79,46 +62,38 @@ class cameraScanner:
 
         return data
 
-    # Necesita un bucle de ventana en Tkinter para ir captando los Frames
-    # Retorna un dato, hasta que no retorne algo distinto a
-    # Retorna tambien el dato del tipo de qrbarcode
-    def scanner(self):
-        if self.__cam.isOpened():
-            # Obtienen los frames de la camara desde OpenCV
-            ret, frame = self.__cam.read()
+    def update_image(self):
+        if self.cam.isOpened():
+            self.frame = self.cam.read()[1]
+            # Get the latest frame and convert image format
+            self.image = cv2.cvtColor(self.cam.read()[1], cv2.COLOR_BGR2RGB) # to RGB
+            self.image = Image.fromarray(self.image) # to PIL format
+            self.image = ImageTk.PhotoImage(self.image) # to ImageTk format
 
-            # Comprueba que ret sea distinto a vacio
-            if ret:
-                # BGR to RGBA
-                cev2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            # Update image
+            self.canvas.create_image(0, 0, anchor=tk.NW, image=self.image)
 
-                # RGBA CV2 TO PIL
-                frame_pil = Image.fromarray(cev2image)
+            self.data = self.decoder()
 
-                # PIL to Tkinter
-                frame_imgtk = ImageTk.PhotoImage(image=frame_pil)
 
-                # Fijamos la imagen al panel de Tk
-                self.panel.imgtk = frame_imgtk
-                self.panel.config(image=frame_imgtk)
-                self.panel.place(x=0, y=200)
-
-            returnbarcodedata = self.decoder(frame)
-
-            if returnbarcodedata.getData() != None:
-                # DEBUG ZONE
-                # print(returnbarcodedata.getData())
-                # print(returnbarcodedata.getType())
-
-                # Le manda al decodificador el Frame Per Second
-                return returnbarcodedata
+            if self.data.getType() == None:
+                # Repeat every 'interval' ms
+                self.window.after(self.interval, self.update_image)
             else:
-                self.window.after(1, self.scanner)
+                if self.cam.isOpened():
+                    print("Cam Released")
+                    self.cam.release()
+
+                print("Exit window")
+                self.window.quit()
+
         else:
             raise Exception("No es posible abrir la camara", 0)
 
 
-# Codigo a incluir donde se llamen los modulos
-#myscanner = cameraScanner()
+#root = tk.Tk()
+#mycamera = camera(root, cv2.VideoCapture(0))
+#mycamera.update_image()
+#root.mainloop()
 
-#myscanner.window.mainloop()
+#print(mycamera.data.getType())
