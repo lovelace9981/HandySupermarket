@@ -75,7 +75,6 @@ class cameraScanner:
 
             self.data = self.decoder()
 
-
             if self.data.getType() == None:
                 # Repeat every 'interval' ms
                 self.window.after(self.interval, self.update_image)

@@ -17,7 +17,6 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 
 
 def relative_to_assets(path: str) -> Path:
-    print(f"Encontrado {path}")
     return ASSETS_PATH / Path(path)
 
 
@@ -75,8 +74,6 @@ class scannerGUI:
         self.panel.place(x=0, y=200)
         self.window.resizable(False, False)
 
-        print("Entra")
-
         self.mycamera = cameraScanner(self.window)
         self.mycamera.update_image()
         self.window.mainloop()
@@ -99,6 +96,7 @@ class scannerGUI:
                 print(dmlContainer.getHeaderTable())
                 print(dmlContainer.getBodyTable())
 
+                # Aqui deberia ir la GUI de producto
 
             else: # No es codigo de barras, es un QR de pasillos estante
                 print("QR PASILLOS ESTANTES")
@@ -115,6 +113,8 @@ class scannerGUI:
 
                 print(dmlContainer.getHeaderTable())
                 print(dmlContainer.getBodyTable())
+
+                # Aqui deberia ir la GUI de pasillo
 
 
             # Disenio de REGEX

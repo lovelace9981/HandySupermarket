@@ -1,5 +1,6 @@
 import mariadb
 import sys
+import os
 
 class dmlContainer:
     def __init__(self, header = None, body = None):
@@ -21,7 +22,8 @@ class databaseSQL(object):
                 self.__conn = mariadb.connect(
                     user="USERHANDYSUPERMARKET",
                     password="PASSWORD",
-                    host="192.168.122.18",
+                    #host="192.168.122.18",
+                    host="192.168.122.241",
                     port=3306,
                     database="HANDYSUPERMARKET"
                 )
@@ -39,19 +41,37 @@ class databaseSQL(object):
             self.__cur.fetchall()
             check_tables = self.__cur.rowcount
 
+
+            __path_ddl = os.getcwd() + "/modules/database/DDL.sql"
+            __path_dml = os.getcwd() + "/modules/database/DML.sql"
+
+
             if check_tables == 0:
                 # Abrimos los ficheros de comprobacion de tablas de la base de datos
-                __ddl_file = open("../database/DDL.sql", "r")
+                __ddl_file = open(__path_ddl, "r")
                 __ddl_text = __ddl_file.read()
                 __ddl_list = __ddl_text.split(";")
                 # Borramos el ultimo elemento de la lista que es un \n
                 __ddl_list.pop()
-
-
                 __ddl_file.close()
 
+                __dml_file = open(__path_dml,"r")
+                __dml_text = __dml_file.read()
+                __dml_list = __dml_text.split(";")
+
+                __dml_list.pop()
+                __dml_file.close()
+
                 try:
+                    self.__conn.commit()
+
                     for i in __ddl_list:
+                        # execute DDL of tables
+                        self.__cur.execute(i)
+                        # Commit any pending transaction to database
+                        self.__conn.commit()
+
+                    for i in __dml_list:
                         # execute DDL of tables
                         self.__cur.execute(i)
                         # Commit any pending transaction to database
